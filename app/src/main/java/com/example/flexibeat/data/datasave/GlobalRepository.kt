@@ -15,8 +15,13 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private val Context.dataStore by preferencesDataStore("global_prefs")
 
@@ -51,5 +56,16 @@ object GlobalRepository {
     fun <T> getValue(name: String, defaultValue: T): Flow<T> {
         val key = getOrCreateKey(name, defaultValue)
         return dataStore.data.map { it[key] ?: defaultValue }
+    }
+
+    fun <T> saveValueBackground(name: String, value: T) {
+        CoroutineScope(Dispatchers.IO).launch { saveValue(name, value) }
+    }
+
+    fun <T> getValueBackground(name: String, defaultValue: T, setter: (T) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val savedValue = getValue(name, defaultValue).first()
+            withContext(Dispatchers.Main) { setter(savedValue) }
+        }
     }
 }

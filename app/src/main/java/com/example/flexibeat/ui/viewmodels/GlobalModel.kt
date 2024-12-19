@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.flexibeat.data.datasave.GlobalRepository
 import com.example.flexibeat.ui.views.TABS
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 private const val pagerIdxSaveKey = "pager_idx"
@@ -20,7 +19,7 @@ class GlobalModel(private val coroutineScope: CoroutineScope) : ViewModel() {
         private set
 
     init {
-        viewModelScope.launch { pagerState = PagerState(GlobalRepository.getValue(pagerIdxSaveKey, 1).first()) { TABS.size } }
+        GlobalRepository.getValueBackground(pagerIdxSaveKey, 1) { pagerState = PagerState(it) { TABS.size } }
         viewModelScope.launch { snapshotFlow { pagerState?.targetPage } .collect { pageIndex -> pageIndex?.let { GlobalRepository.saveValue(pagerIdxSaveKey, it) } } }
     }
     fun scrollToPage(idx: Int) {

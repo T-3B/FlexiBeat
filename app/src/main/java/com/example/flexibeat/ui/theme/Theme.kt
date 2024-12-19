@@ -19,11 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.flexibeat.data.datasave.GlobalRepository
 import com.example.flexibeat.ui.views.MusicPlayerMainScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val primaryColorSaveKey = "primary_color"
 
@@ -36,24 +31,10 @@ object UserColors {
     var primary get() = _primary
         set(value) {
             _primary = value
-            pushDataSave()
+            GlobalRepository.saveValueBackground(primaryColorSaveKey, value.toArgb())
         }
 
-    init { getDataSave() }
-
-    private fun getDataSave() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val savedPrimary = Color(GlobalRepository.getValue(primaryColorSaveKey, DefaultColors.primary.toArgb()).first())
-            withContext(Dispatchers.Main) {
-                _primary = savedPrimary
-            }
-        }
-    }
-    private fun pushDataSave() {
-        CoroutineScope(Dispatchers.IO).launch {
-            GlobalRepository.saveValue(primaryColorSaveKey, _primary.toArgb())
-        }
-    }
+    init { GlobalRepository.getValueBackground(primaryColorSaveKey, DefaultColors.primary.toArgb()) { _primary = Color(it) } }
 }
 
 @Preview(name = "Light Mode", uiMode = Configuration.UI_MODE_NIGHT_NO, device = "spec:parent=2.7in QVGA slider,orientation=portrait")
