@@ -13,15 +13,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-private const val pagerIdxSave = "pager_idx"
+private const val pagerIdxSaveKey = "pager_idx"
 
 class GlobalModel(private val coroutineScope: CoroutineScope) : ViewModel() {
     var pagerState: PagerState? by mutableStateOf(null)
         private set
 
     init {
-        viewModelScope.launch { pagerState = PagerState(GlobalRepository.getValue(pagerIdxSave, 1).first()) { TABS.size } }
-        viewModelScope.launch { snapshotFlow { pagerState?.targetPage } .collect { pageIndex -> pageIndex?.let { GlobalRepository.saveValue(pagerIdxSave, it) } } }
+        viewModelScope.launch { pagerState = PagerState(GlobalRepository.getValue(pagerIdxSaveKey, 1).first()) { TABS.size } }
+        viewModelScope.launch { snapshotFlow { pagerState?.targetPage } .collect { pageIndex -> pageIndex?.let { GlobalRepository.saveValue(pagerIdxSaveKey, it) } } }
     }
     fun scrollToPage(idx: Int) {
         coroutineScope.launch { pagerState?.animateScrollToPage(idx) } }

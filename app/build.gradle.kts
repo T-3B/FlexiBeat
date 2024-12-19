@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.media3.session)
     implementation(libs.termux.app.termux.shared)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.colorpicker)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.ui.tooling)
 }

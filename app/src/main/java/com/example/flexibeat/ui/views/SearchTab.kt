@@ -14,7 +14,6 @@ import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -51,7 +50,7 @@ fun SearchTab(playerController: PlayerController, scrollToPage: (Int) -> Unit) {
                 }),
                 singleLine = true
             )
-        }, true, { }, Modifier.fillMaxSize(), shape = ShapeDefaults.ExtraSmall) {
+        }, true, { }, Modifier.fillMaxSize()) {
             AnimatedContent(searchTabModel.isSearching, Modifier.align(Alignment.CenterHorizontally)) { isSearching ->
                 if (isSearching)
                     CircularProgressIndicator()

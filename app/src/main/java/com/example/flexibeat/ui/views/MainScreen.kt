@@ -2,7 +2,6 @@ package com.example.flexibeat.ui.views
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
@@ -35,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flexibeat.R
 import com.example.flexibeat.controllers.PlayerController
-import com.example.flexibeat.data.datasave.GlobalRepository
 import com.example.flexibeat.ui.viewmodels.GlobalModel
 
 internal val TABS = arrayOf(  // Icon() can only be created inside the Composable TabRow... so this is a List of Pairs
@@ -43,7 +39,6 @@ internal val TABS = arrayOf(  // Icon() can only be created inside the Composabl
     Icons.Default.PlayCircleOutline to "Currently playing song",
     Icons.AutoMirrored.Filled.ManageSearch to "Search",
     Icons.Default.Folder to "Local files",
-    Icons.Default.LibraryMusic to "Your playlists",
     Icons.Default.Settings to "Settings"
 )
 
@@ -51,7 +46,6 @@ internal val TABS = arrayOf(  // Icon() can only be created inside the Composabl
 fun MusicPlayerMainScreen() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    GlobalRepository.initialize(context)
     val playerController = PlayerController(context)
     val globalModel = viewModel { GlobalModel(coroutineScope) }
     val isReady by remember { derivedStateOf { globalModel.pagerState != null } }
@@ -85,7 +79,7 @@ fun MusicPlayerMainScreen() {
                             1 -> PlayingSongTab(playerController)
                             2 -> SearchTab(playerController, globalModel::scrollToPage)
                             3 -> LocalStorageTab(playerController, globalModel::scrollToPage)
-                            else -> Box(Modifier.fillMaxSize()) { Text(text = "This is a sample text in the second tab") }
+                            4 -> PreferencesTab()
                         }
                     }
                 }
