@@ -45,7 +45,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +54,6 @@ import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import coil3.compose.AsyncImage
-import com.example.flexibeat.R
 import com.example.flexibeat.controllers.PlayerController
 import com.example.flexibeat.ui.viewmodels.PlayingSongModel
 import dev.vivvvek.seeker.Seeker
@@ -96,12 +94,7 @@ fun CoverArt(playingSongModel: PlayingSongModel, modifier: Modifier) {
 
         playingSongModel.coverBitmap?.let { Image(it.asImageBitmap(), "Album art", modifierSub) }
             ?: playingSongModel.cover?.let { AsyncImage(it, "Album art", modifierSub) }
-            ?: Icon(
-                painterResource(R.drawable.ic_notification),
-                "Cover Art",
-                modifierSub,
-                colorScheme.primary
-            )
+            ?: FlexiBeatCover(modifierSub)
     }
 }
 
