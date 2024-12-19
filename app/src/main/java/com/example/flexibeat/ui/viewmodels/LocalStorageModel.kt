@@ -5,8 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.flexibeat.data.FileExplorerItems
 import com.example.flexibeat.data.fetchFileExplorerItems
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class LocalStorageModel(context: Context) : ViewModel() {
@@ -17,8 +21,14 @@ class LocalStorageModel(context: Context) : ViewModel() {
     var relPath get() = _relPath
         set(value) {
             _relPath = value.normalize()
-            items = fetchFileExplorerItems(contentResolver, relPath)
+            updateItems()
         }
 
-    init { items = fetchFileExplorerItems(contentResolver, relPath) }
+    init { updateItems() }
+
+    private fun updateItems() {
+        viewModelScope.launch {
+            items = withContext(Dispatchers.IO) { fetchFileExplorerItems(contentResolver, relPath) }
+        }
+    }
 }
