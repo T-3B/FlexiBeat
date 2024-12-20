@@ -17,7 +17,7 @@ class QueueTabModel(playerController: PlayerController) : ViewModel() {
     init {
         playerController.addListener(object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                playingQueueIndex = playerController.getSongIdx
+                playingQueueIndex = playerController.songIdx
             }
         })
     }

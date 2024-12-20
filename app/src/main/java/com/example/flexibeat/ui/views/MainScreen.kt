@@ -48,7 +48,7 @@ fun MusicPlayerMainScreen() {
     val coroutineScope = rememberCoroutineScope()
     val playerController = PlayerController(context)
     val globalModel = viewModel { GlobalModel(coroutineScope) }
-    val isReady by remember { derivedStateOf { globalModel.pagerState != null } }
+    val isReady by remember { derivedStateOf { globalModel.pagerState != null && playerController.isInitialized } }
 
     DisposableEffect(Unit) {
         onDispose(playerController::destroyPlayer)

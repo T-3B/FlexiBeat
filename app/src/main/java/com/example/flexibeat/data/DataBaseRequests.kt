@@ -2,15 +2,12 @@ package com.example.flexibeat.data
 
 import android.content.ContentResolver
 import android.content.ContentUris
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import java.io.File
-import java.io.IOException
 
 fun requestFilteredAudioFiles(contentResolver: ContentResolver, searchKey: String): List<AudioFile> {
     throw NotImplementedError()
@@ -68,19 +65,15 @@ fun fetchFileExplorerItems(contentResolver: ContentResolver, relPath: File): Fil
     return FileExplorerItems(folders.sorted(), audioFiles)
 }
 
-fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long, songAbsolutePath: String): Bitmap? {
-    val size = android.util.Size(100, 100) // Set the desired thumbnail size
-    var coverArt: Bitmap? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {try {
-        contentResolver.loadThumbnail(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId), size, null)
-    } catch (e: IOException) {
-        null
-    }} else {
-        var albumArtPath: String? = null
+fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long, songAbsolutePath: String): String? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId).toString()
+        else {
         contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums.ALBUM_ART), "${MediaStore.Audio.Albums._ID} = ?", arrayOf(albumId.toString()), null)?.use {
-            if (it.moveToFirst()) albumArtPath = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART))
+            if (it.moveToFirst()) it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART)) else null
         }
-        BitmapFactory.decodeFile(albumArtPath)
     }
+    var coverArt = null
     return coverArt
     @Suppress("UNREACHABLE_CODE")
     if (coverArt == null) {  // TODO too slow
@@ -89,7 +82,7 @@ fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long, songAbsoluteP
         val data = retriever.embeddedPicture
         retriever.release()
         if (data != null)
-            coverArt = BitmapFactory.decodeByteArray(data, 0, data.size)
+            coverArt = null //BitmapFactory.decodeByteArray(data, 0, data.size)
         else {
             // Fallback: Check for image files in the song's directory
             val songFile = File(songAbsolutePath)
@@ -105,7 +98,7 @@ fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long, songAbsoluteP
 
             // If found, decode the first match
             return if (imageFiles.isNotEmpty()) {
-                BitmapFactory.decodeFile(imageFiles[0].absolutePath)
+                imageFiles[0].absolutePath
             } else {
                 null // No suitable image found
             }

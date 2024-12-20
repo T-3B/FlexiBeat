@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -67,9 +68,10 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.commons.exec)
     implementation(libs.androidx.media3.session)
-    implementation(libs.termux.app.termux.shared)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.colorpicker)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.ui.tooling)
 }

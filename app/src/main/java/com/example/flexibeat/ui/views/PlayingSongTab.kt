@@ -1,7 +1,6 @@
 package com.example.flexibeat.ui.views
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -43,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +55,6 @@ import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import coil3.compose.AsyncImage
 import com.example.flexibeat.controllers.PlayerController
-import com.example.flexibeat.ui.theme.UserColors
 import com.example.flexibeat.ui.viewmodels.PlayingSongModel
 import dev.vivvvek.seeker.Seeker
 import dev.vivvvek.seeker.SeekerDefaults
@@ -68,7 +65,6 @@ val repeatStates = listOf(Icons.Default.Repeat to REPEAT_MODE_OFF, Icons.Default
 
 @Composable
 fun PlayingSongTab(playerController: PlayerController) {
-    Log.d("blabla", UserColors.primary.toArgb().toLong().toString(16))
     val playingSongModel = viewModel { PlayingSongModel(playerController) }
     if (LocalConfiguration.current.orientation == ORIENTATION_LANDSCAPE)
         Row(Modifier.fillMaxSize().padding(16.dp), Arrangement.SpaceEvenly, Alignment.CenterVertically) {

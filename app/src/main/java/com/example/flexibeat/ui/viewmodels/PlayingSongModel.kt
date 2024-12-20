@@ -43,9 +43,9 @@ class PlayingSongModel(playerController: PlayerController) : ViewModel() {
         lateinit var runnable: Runnable
         runnable = Runnable {
             visualProgress = playerController.progress
-            handler.postDelayed(runnable, 1000)
+            handler.postDelayed(runnable, 1000L)
         }
-        handler.postDelayed(runnable, 0)
+        handler.postDelayed(runnable, 1000L)
     }
 
     fun refreshMetadata(mediaMetadata: MediaMetadata) {

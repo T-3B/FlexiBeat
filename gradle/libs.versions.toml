@@ -5,7 +5,7 @@ coilComposeVersion = "3.0.4"
 colorpicker = "1.0.0"
 commonsExec = "1.4.0"
 datastorePreferences = "1.1.1"
-kotlin = "2.0.0"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
@@ -14,8 +14,8 @@ appcompat = "1.7.0"
 lifecycleViewmodelCompose = "2.8.7"
 materialIconsExtended = "1.7.6"
 media3Session = "1.5.0"
+roomRuntime = "2.7.0-alpha12"
 seeker = "1.2.2"
-termuxShared = "v0.118.0"
 uiTooling = "1.7.6"
 constraintlayout = "2.2.0"
 constraintlayoutCompose = "1.1.0"
@@ -24,11 +24,12 @@ workRuntimeKtx = "2.10.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
-androidx-activity = { module = "androidx.activity:activity" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3Session" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 coil3-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilComposeVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -43,7 +44,6 @@ colorpicker = { module = "io.mhssn:colorpicker", version.ref = "colorpicker" }
 commons-exec = { module = "org.apache.commons:commons-exec", version.ref = "commonsExec" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 seeker = { module = "io.github.2307vivek:seeker", version.ref = "seeker" }
-termux-app-termux-shared = { module = "com.github.termux.termux-app:termux-shared", version.ref = "termuxShared" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
