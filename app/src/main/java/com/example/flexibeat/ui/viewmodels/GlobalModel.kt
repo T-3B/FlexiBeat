@@ -19,7 +19,7 @@ class GlobalModel(private val coroutineScope: CoroutineScope) : ViewModel() {
         private set
 
     init {
-        GlobalRepository.getValueBackground(pagerIdxSaveKey, 1) { pagerState = PagerState(it) { TABS.size } }
+        viewModelScope.launch { GlobalRepository.getValue(pagerIdxSaveKey, 1).collect {pagerState = PagerState(it) { TABS.size }} }
         viewModelScope.launch { snapshotFlow { pagerState?.targetPage } .collect { pageIndex -> pageIndex?.let { GlobalRepository.saveValue(pagerIdxSaveKey, it) } } }
     }
     fun scrollToPage(idx: Int) {

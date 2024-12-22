@@ -46,7 +46,6 @@ fun FlexiBeatTheme(
     content: @Composable () -> Unit = { MusicPlayerMainScreen() }
 ) {
     val context = LocalContext.current
-    GlobalRepository.initialize(context)
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         darkTheme -> darkColorScheme(background = Color.Black)

@@ -46,7 +46,7 @@ internal val TABS = arrayOf(  // Icon() can only be created inside the Composabl
 fun MusicPlayerMainScreen() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val playerController = PlayerController(context)
+    val playerController = remember { PlayerController(context) }
     val globalModel = viewModel { GlobalModel(coroutineScope) }
     val isReady by remember { derivedStateOf { globalModel.pagerState != null && playerController.isInitialized } }
 

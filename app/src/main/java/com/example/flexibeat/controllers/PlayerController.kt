@@ -28,15 +28,14 @@ private const val songPositionSaveKey = "song_current_position"
 
 class PlayerController(context: Context) {
     private val audioFileDao = AudioDatabase.getDatabase(context).audioFileDao()
+    val chapters = listOf(Segment(name = "Intro", start = 0f), Segment(name = "Part 1", start = .33f), Segment(name = "Part 2", start = .67f))
     var isInitialized = false
         private set
     var queue by mutableStateOf(listOf<AudioFile>())
         private set
-    val chapters = listOf(Segment(name = "Intro", start = 0f), Segment(name = "Part 1", start = .33f), Segment(name = "Part 2", start = .67f))
     private val player = ExoPlayer.Builder(context)
         .setAudioAttributes(AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), true)
         .build()
-
     init {
         player.addListener(object: Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) { player.play()
@@ -71,9 +70,7 @@ class PlayerController(context: Context) {
         set(value) { player.shuffleModeEnabled = value }
 
     fun addListener(listener: Player.Listener) { player.addListener(listener) }
-    fun destroyPlayer() {
-        player.release()
-    }
+    fun destroyPlayer() = player.release()
     fun seekTo(pos: Long) { player.seekTo(pos) }
     fun seekBackward() { player.seekBack() }
     fun seekForward() { player.seekForward() }
@@ -91,6 +88,7 @@ class PlayerController(context: Context) {
         player.apply {
             setMediaItems(audioFiles.map { MediaItem.fromUri(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, it.id)) }, initialIdx, initialPosition)
             prepare()
+            play()
         }
     }
     fun playPause() { player.playWhenReady = !player.isPlaying }
