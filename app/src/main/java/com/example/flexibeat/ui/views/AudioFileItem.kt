@@ -53,20 +53,6 @@ fun AudioFileItem(audioFile: AudioFile, modifier: Modifier = Modifier, onClick: 
         modifier = modifier.fillMaxWidth().clickable(onClick = onClick).padding(8.dp).wrapContentHeight(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val context = LocalContext.current
-        val bitmap = audioFile.albumArtUri?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                try {
-                    context.contentResolver.loadThumbnail(it.toUri(), Size(48, 48), null)
-                } catch (e: IOException) {
-                    null
-                }
-            else
-                BitmapFactory.decodeFile(it)
-        } ?: MediaMetadataRetriever().apply {
-            setDataSource(context, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, audioFile.id))
-        }.embeddedPicture?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-
         AlbumArt(audioFile, modifier)
 
         Column(modifier = modifier.padding(start = 8.dp)) {
