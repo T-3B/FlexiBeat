@@ -72,7 +72,7 @@ fun MusicPlayerMainScreen() {
                     HorizontalPager(
                         state = globalModel.pagerState!!,
                         modifier = Modifier.padding(paddingValues),
-                        beyondViewportPageCount = 1
+                        beyondViewportPageCount = TABS.size
                     ) { page ->
                         when (page) {
                             0 -> QueueTab(playerController, globalModel::scrollToPage)

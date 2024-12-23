@@ -1,6 +1,9 @@
 package com.example.flexibeat.data
 
+import android.content.ContentUris
 import android.content.Context
+import android.provider.MediaStore
+import androidx.media3.common.MediaItem
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -61,9 +64,11 @@ data class AudioFile(
     val title: String?,
     val album: String?,
     val artist: String?,
-    val coverPath: String?,
-    val duration: Long?
-)
+    val duration: Long?,
+    val albumArtUri: String?
+) {
+    fun toMediaItem() = MediaItem.fromUri(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id))
+}
 
 data class FileExplorerItems(
     val folders: List<File>,

@@ -11,7 +11,7 @@ import com.example.flexibeat.controllers.PlayerController
 
 class QueueTabModel(playerController: PlayerController) : ViewModel() {
     val queue by derivedStateOf { playerController.queue }
-    var playingQueueIndex by mutableIntStateOf(0)
+    var playingQueueIndex by mutableIntStateOf(playerController.songIdx)
         private set
 
     init {

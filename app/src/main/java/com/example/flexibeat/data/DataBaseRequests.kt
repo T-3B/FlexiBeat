@@ -2,21 +2,23 @@ package com.example.flexibeat.data
 
 import android.content.ContentResolver
 import android.content.ContentUris
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
+import androidx.annotation.OptIn
+import androidx.core.net.toUri
+import androidx.media3.common.util.UnstableApi
 import java.io.File
 
 fun requestFilteredAudioFiles(contentResolver: ContentResolver, searchKey: String): List<AudioFile> {
     throw NotImplementedError()
 }
 
-fun fetchFileExplorerItems(contentResolver: ContentResolver, relPath: File): FileExplorerItems {
+@OptIn(UnstableApi::class)
+fun fetchFileExplorerItems(contentResolver: ContentResolver, currentDir: File): FileExplorerItems {
     val folders = mutableSetOf<File>()
-    if (relPath.path.isNotEmpty())
-        folders.add(File(relPath.path, ".."))
+    if (currentDir.path.isNotEmpty())
+        folders.add(File(currentDir.path, ".."))
     val audioFiles = mutableListOf<AudioFile>()
     val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
     val projection = arrayOf(
@@ -30,8 +32,8 @@ fun fetchFileExplorerItems(contentResolver: ContentResolver, relPath: File): Fil
         MediaStore.Audio.Media.DISPLAY_NAME
     )
     val selection = "${MediaStore.Files.FileColumns.RELATIVE_PATH} like ? "
-    val selectionArgs = arrayOf(relPath.path + "%")
-    val sortOrder = MediaStore.Audio.Media.TITLE
+    val selectionArgs = arrayOf(currentDir.path + "%")
+    val sortOrder = "${MediaStore.Audio.Media.RELATIVE_PATH} ASC, ${MediaStore.Audio.Media.TITLE} ASC"
     contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)?.use {
         val idIdx = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
         val titleIdx = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
@@ -44,7 +46,7 @@ fun fetchFileExplorerItems(contentResolver: ContentResolver, relPath: File): Fil
         while (it.moveToNext()) {
             val fileRelPath = File(it.getString(fileRelPathIdx).let { if (it == "/") "" else it })
 
-            if (relPath == fileRelPath) {
+            if (currentDir == fileRelPath) {
                 val id = it.getLong(idIdx)
                 val title = it.getString(titleIdx)
                 val album = it.getString(albumIdx)
@@ -53,56 +55,25 @@ fun fetchFileExplorerItems(contentResolver: ContentResolver, relPath: File): Fil
                 val duration = it.getLong(durationIdx)
                 val displayName = it.getString(displayNameIdx)
 
-                val albumArt = fetchAlbumArt(contentResolver, albumId, File(File(Environment.getExternalStorageDirectory(), fileRelPath.path), displayName).path)
-                audioFiles.add(AudioFile(id, title, album, artist, albumArt, duration))
-            }
+                val albumArt = fetchAlbumArt(contentResolver, albumId)
 
-            fileRelPath.toRelativeString(relPath).substringBefore('/').takeIf(String::isNotEmpty)?.let { folders.add(if (relPath.path.isEmpty()) File(it) else File(relPath.path, it)) }
+                audioFiles.add(AudioFile(id, title, album, artist, duration, albumArt.toString()))
+            }
+            else
+                fileRelPath.toRelativeString(currentDir).substringBefore('/').let { folders.add(File(currentDir.path, it)) }
 
         }
 
     }
-    return FileExplorerItems(folders.sorted(), audioFiles)
+    return FileExplorerItems(folders.toList(), audioFiles)
 }
 
-fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long, songAbsolutePath: String): String? {
+private fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long): Uri? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId).toString()
+            ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId)
         else {
-        contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums.ALBUM_ART), "${MediaStore.Audio.Albums._ID} = ?", arrayOf(albumId.toString()), null)?.use {
-            if (it.moveToFirst()) it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART)) else null
-        }
-    }
-    var coverArt = null
-    return coverArt
-    @Suppress("UNREACHABLE_CODE")
-    if (coverArt == null) {  // TODO too slow
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(songAbsolutePath)
-        val data = retriever.embeddedPicture
-        retriever.release()
-        if (data != null)
-            coverArt = null //BitmapFactory.decodeByteArray(data, 0, data.size)
-        else {
-            // Fallback: Check for image files in the song's directory
-            val songFile = File(songAbsolutePath)
-            val directory = songFile.parentFile ?: return null
-
-            // Filter images with names "cover" or "folder" (case-insensitive)
-            val imageFiles = directory.listFiles { file ->
-                val mimeType = file.toURI().toURL().openConnection().contentType
-                val isImage = mimeType.startsWith("image/")
-                val fileNameWithoutExtension = file.nameWithoutExtension.lowercase()
-                isImage && (fileNameWithoutExtension == "cover" || fileNameWithoutExtension == "folder")
-            } ?: return null
-
-            // If found, decode the first match
-            return if (imageFiles.isNotEmpty()) {
-                imageFiles[0].absolutePath
-            } else {
-                null // No suitable image found
+            contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums.ALBUM_ART), "${MediaStore.Audio.Albums._ID} = ?", arrayOf(albumId.toString()), null)?.use {
+                if (it.moveToFirst()) it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART)).toUri() else null
             }
         }
-    }
-    return coverArt
 }
