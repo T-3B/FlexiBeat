@@ -13,9 +13,9 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.example.flexibeat.data.AudioDatabase
 import com.example.flexibeat.data.AudioFile
 import com.example.flexibeat.data.datasave.GlobalRepository
+import com.example.flexibeat.data.datasave.QueueDatabase
 import dev.vivvvek.seeker.Segment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ private const val songIdxSaveKey = "song_idx"
 private const val songPositionSaveKey = "song_current_position"
 
 class PlayerController(context: Context) {
-    private val audioFileDao = AudioDatabase.getDatabase(context).audioFileDao()
+    private val audioFileDao = QueueDatabase.getDatabase(context).audioFileDao()
     val chapters = listOf(Segment(name = "Intro", start = 0f), Segment(name = "Part 1", start = .33f), Segment(name = "Part 2", start = .67f))
     var isInitialized = false
         private set
