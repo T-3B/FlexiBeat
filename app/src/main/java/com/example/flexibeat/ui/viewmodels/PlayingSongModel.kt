@@ -8,7 +8,6 @@ import android.os.Looper
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.RepeatOne
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -28,7 +27,6 @@ import com.example.flexibeat.controllers.PlayerController
 val repeatStates = listOf(Icons.Default.Repeat to REPEAT_MODE_OFF, Icons.Default.Repeat to REPEAT_MODE_ALL, Icons.Default.RepeatOne to REPEAT_MODE_ONE)
 
 class PlayingSongModel(playerController: PlayerController) : ViewModel() {
-    val currentSong by derivedStateOf { playerController.queue.takeIf { it.isNotEmpty() } ?.get(playerController.songIdx) }
     val loopStateAssociatedIcon get() = repeatStates[loopState].first
     var visualProgress by mutableFloatStateOf(0f)
     var isPlaying by mutableStateOf(false)
@@ -51,13 +49,13 @@ class PlayingSongModel(playerController: PlayerController) : ViewModel() {
         private set
 
     init {
-        refreshMetadata(playerController.mediaMetadata, currentSong?.albumArtUri?.toUri())
+        refreshMetadata(playerController.mediaMetadata, playerController.currentSong?.albumArtUri?.toUri())
 
         playerController.addListener(object : Player.Listener {  // add listeners for UI updates
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) { duration = playerController.duration }
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                 if (mediaMetadata != MediaMetadata.EMPTY)
-                    refreshMetadata(mediaMetadata, currentSong?.albumArtUri?.toUri())
+                    refreshMetadata(mediaMetadata, playerController.currentSong?.albumArtUri?.toUri())
             }
             override fun onIsPlayingChanged(isPlayin: Boolean) { isPlaying = isPlayin }
             override fun onPlaybackStateChanged(playbackState: Int) { duration = playerController.duration }

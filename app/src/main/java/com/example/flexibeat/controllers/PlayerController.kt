@@ -60,6 +60,7 @@ class PlayerController(context: Context) {
         handler.postDelayed(runnable, 1000L)
     }
 
+    val currentSong get() = queue.getOrNull(songIdx)
     val duration get() = player.duration
     val songIdx get() = player.currentMediaItemIndex
     val mediaMetadata get() = player.mediaMetadata

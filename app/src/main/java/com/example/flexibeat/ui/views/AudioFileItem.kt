@@ -92,7 +92,7 @@ private fun AlbumArt(audioFile: AudioFile, modifier: Modifier) {
     var albumArtUri by remember { mutableStateOf<Bitmap?>(null) }
     LaunchedEffect(audioFile) {
         albumArtUri = withContext(Dispatchers.IO) {
-            audioFile.albumArtUri?.let {
+            audioFile.albumArtUri.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     try {
                         context.contentResolver.loadThumbnail(it.toUri(), Size(48, 48), null)
