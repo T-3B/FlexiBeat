@@ -21,8 +21,6 @@ import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.RepeatOne
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -33,11 +31,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,9 +44,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.Player.REPEAT_MODE_ALL
-import androidx.media3.common.Player.REPEAT_MODE_OFF
-import androidx.media3.common.Player.REPEAT_MODE_ONE
 import coil3.compose.SubcomposeAsyncImage
 import com.example.flexibeat.controllers.PlayerController
 import com.example.flexibeat.ui.viewmodels.PlayingSongModel
@@ -61,7 +52,6 @@ import dev.vivvvek.seeker.SeekerDefaults
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-val repeatStates = listOf(Icons.Default.Repeat to REPEAT_MODE_OFF, Icons.Default.Repeat to REPEAT_MODE_ALL, Icons.Default.RepeatOne to REPEAT_MODE_ONE)
 
 @Composable
 fun PlayingSongTab(playerController: PlayerController) {
@@ -71,7 +61,7 @@ fun PlayingSongTab(playerController: PlayerController) {
             CoverArt(playingSongModel, Modifier.weight(1f))
             Column(Modifier.weight(1f).padding(16.dp), Arrangement.Center, Alignment.CenterHorizontally) {
                 SongMetadata(playingSongModel)
-                CurrentSongButtons(playerController)
+                CurrentSongButtons(playingSongModel, playerController)
                 MusicSeekBar(playingSongModel, playerController)
                 PlaybackControls(playingSongModel, playerController)
             }
@@ -80,7 +70,7 @@ fun PlayingSongTab(playerController: PlayerController) {
         Column(Modifier.fillMaxSize().padding(16.dp), Arrangement.Bottom, Alignment.CenterHorizontally) {
             CoverArt(playingSongModel, Modifier.weight(1f))
             SongMetadata(playingSongModel)
-            CurrentSongButtons(playerController)
+            CurrentSongButtons(playingSongModel, playerController)
             MusicSeekBar(playingSongModel, playerController)
             PlaybackControls(playingSongModel, playerController)
         }
@@ -108,21 +98,17 @@ fun SongMetadata(playingSongModel: PlayingSongModel) {
 }
 
 @Composable
-fun CurrentSongButtons(playerController: PlayerController) {
+fun CurrentSongButtons(playingSongModel: PlayingSongModel, playerController: PlayerController) {
     Row(Modifier.fillMaxWidth(), Arrangement.Start) {
-        var loopState by remember { mutableIntStateOf(0) }
-        IconButton(onClick = {
-            loopState = (loopState + 1) % 3
-            playerController.repeatMode = repeatStates[loopState].second
+        IconButton({
+            playerController.repeatMode = playingSongModel.changeLoopState()
         }) {
-            Icon(repeatStates[loopState].first, "Loop (or not) queue or current song", tint = LocalContentColor.current.let { if (loopState == 0) it.copy(0.5f) else it })
+            Icon(playingSongModel.loopStateAssociatedIcon, "Loop (or not) queue or current song", tint = LocalContentColor.current.let { if (playingSongModel.loopState == 0) it.copy(0.5f) else it })
         }
-        var isShuffling by remember { mutableStateOf(false) }
         IconButton(onClick = {
-            isShuffling = !isShuffling
-            playerController.shuffleModeEnabled = isShuffling
+            playerController.shuffleModeEnabled = playingSongModel.toggleShuffling()
         }) {
-            Icon(Icons.Default.Shuffle, "Shuffle queue or not", tint = LocalContentColor.current.let { if (isShuffling) it else it.copy(.5f) })
+            Icon(Icons.Default.Shuffle, "Shuffle queue or not", tint = LocalContentColor.current.let { if (playingSongModel.isShuffled) it else it.copy(.5f) })
         }
     }
 }
