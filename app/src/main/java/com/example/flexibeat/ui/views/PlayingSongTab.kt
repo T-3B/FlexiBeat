@@ -53,7 +53,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.example.flexibeat.controllers.PlayerController
 import com.example.flexibeat.ui.viewmodels.PlayingSongModel
 import dev.vivvvek.seeker.Seeker
@@ -93,7 +93,7 @@ fun CoverArt(playingSongModel: PlayingSongModel, modifier: Modifier) {
         val modifierSub = Modifier.align(Alignment.Center).aspectRatio(1f).background(colorScheme.inverseOnSurface)
 
         playingSongModel.coverBitmap?.let { Image(it.asImageBitmap(), "Album art", modifierSub) }
-            ?: playingSongModel.cover?.let { AsyncImage(it, "Album art", modifierSub) }
+            ?: playingSongModel.cover?.let { SubcomposeAsyncImage(it, "Album art", modifierSub, error = { FlexiBeatCover(modifierSub) } ) }
             ?: FlexiBeatCover(modifierSub)
     }
 }
