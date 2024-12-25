@@ -2,11 +2,8 @@ package com.example.flexibeat.data
 
 import android.content.ContentResolver
 import android.content.ContentUris
-import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.OptIn
-import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
 import java.io.File
 
@@ -55,7 +52,7 @@ fun fetchFileExplorerItems(contentResolver: ContentResolver, currentDir: File): 
                 val duration = it.getLong(durationIdx)
                 val displayName = it.getString(displayNameIdx)
 
-                val albumArt = fetchAlbumArt(contentResolver, albumId)
+                val albumArt = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, albumId)
 
                 audioFiles.add(AudioFile(id, title, album, artist, duration, albumArt.toString()))
             }
@@ -66,14 +63,4 @@ fun fetchFileExplorerItems(contentResolver: ContentResolver, currentDir: File): 
 
     }
     return FileExplorerItems(folders.toList(), audioFiles)
-}
-
-private fun fetchAlbumArt(contentResolver: ContentResolver, albumId: Long): Uri? {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId)
-        else {
-            contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums.ALBUM_ART), "${MediaStore.Audio.Albums._ID} = ?", arrayOf(albumId.toString()), null)?.use {
-                if (it.moveToFirst()) it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART)).toUri() else null
-            }
-        }
 }

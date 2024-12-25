@@ -82,8 +82,8 @@ fun CoverArt(playingSongModel: PlayingSongModel, modifier: Modifier) {
     Box(modifier.fillMaxSize()) {
         val modifierSub = Modifier.align(Alignment.Center).aspectRatio(1f).background(colorScheme.inverseOnSurface)
 
-        playingSongModel.coverBitmap?.let { Image(it.asImageBitmap(), "Album art", modifierSub) }
-            ?: playingSongModel.cover?.let { SubcomposeAsyncImage(it, "Album art", modifierSub, error = { FlexiBeatCover(modifierSub) } ) }
+        playingSongModel.cover?.let { SubcomposeAsyncImage(it, "Album art", modifierSub, error = { FlexiBeatCover(modifierSub) } ) }
+            ?: playingSongModel.coverBitmap?.let { Image(it.asImageBitmap(), "Album art", modifierSub) }
             ?: FlexiBeatCover(modifierSub)
     }
 }

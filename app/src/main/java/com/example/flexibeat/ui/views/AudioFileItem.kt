@@ -130,5 +130,5 @@ private fun AlbumArt(audioFile: AudioFile, modifier: Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun AudioFileItemPreview() {
-    AudioFileItem(AudioFile(0, "Hello World!", "Album Name", "Artist Name", 163906L, null)) {}
+    AudioFileItem(AudioFile(0, "Hello World!", "Album Name", "Artist Name", 163906L, "")) {}
 }

@@ -13,7 +13,7 @@ data class AudioFile(
     val album: String?,
     val artist: String?,
     val duration: Long?,
-    val albumArtUri: String?
+    val albumArtUri: String
 )
 
 data class FileExplorerItems(
