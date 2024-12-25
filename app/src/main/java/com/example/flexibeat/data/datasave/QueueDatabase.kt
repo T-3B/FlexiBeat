@@ -12,7 +12,7 @@ import com.example.flexibeat.data.AUDIOFILE_DBKEY
 import com.example.flexibeat.data.AudioFile
 
 @Dao
-interface AudioFileDao {
+interface QueueDao {
     @Insert
     suspend fun insertAllAudioFiles(audioFiles: List<AudioFile>)
 
@@ -32,7 +32,7 @@ interface AudioFileDao {
 @Database(entities = [AudioFile::class], version = 1, exportSchema = false)
 abstract class QueueDatabase : RoomDatabase() {
 
-    abstract fun audioFileDao(): AudioFileDao
+    abstract fun queueDao(): QueueDao
 
     companion object {
         @Volatile

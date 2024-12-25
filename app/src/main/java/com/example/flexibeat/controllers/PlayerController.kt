@@ -27,7 +27,7 @@ private const val songIdxSaveKey = "song_idx"
 private const val songPositionSaveKey = "song_current_position"
 
 class PlayerController(context: Context) {
-    private val audioFileDao = QueueDatabase.getDatabase(context).audioFileDao()
+    private val audioFileDao = QueueDatabase.getDatabase(context).queueDao()
     val chapters = listOf(Segment(name = "Intro", start = 0f), Segment(name = "Part 1", start = .33f), Segment(name = "Part 2", start = .67f))
     var isInitialized = false
         private set
