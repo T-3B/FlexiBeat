@@ -89,9 +89,9 @@ fun AudioFileItem(audioFile: AudioFile, modifier: Modifier = Modifier, onClick: 
 @Composable
 private fun AlbumArt(audioFile: AudioFile, modifier: Modifier) {
     val context = LocalContext.current
-    var albumArtUri by remember { mutableStateOf<Bitmap?>(null) }
+    var albumArt by remember { mutableStateOf<Bitmap?>(null) }
     LaunchedEffect(audioFile) {
-        albumArtUri = withContext(Dispatchers.IO) {
+        albumArt = withContext(Dispatchers.IO) {
             audioFile.albumArtUri.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     try {
@@ -120,7 +120,7 @@ private fun AlbumArt(audioFile: AudioFile, modifier: Modifier) {
 
 
     SubcomposeAsyncImage(
-        model = ImageRequest.Builder(context).data(albumArtUri).crossfade(true).size(coil3.size.Size(48, 48)).precision(Precision.INEXACT).build(),
+        model = ImageRequest.Builder(context).data(albumArt).crossfade(true).size(coil3.size.Size(48, 48)).precision(Precision.INEXACT).build(),
         contentDescription = "Cover art",
         modifier = modifier.size(48.dp).aspectRatio(1f),
         error = { FlexiBeatCover(modifier.size(48.dp).aspectRatio(1f).background(colorScheme.inverseOnSurface)) }

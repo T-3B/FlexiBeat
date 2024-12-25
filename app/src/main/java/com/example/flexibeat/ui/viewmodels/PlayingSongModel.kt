@@ -23,6 +23,7 @@ import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import com.example.flexibeat.controllers.PlayerController
+import com.example.flexibeat.data.AudioFile
 
 val repeatStates = listOf(Icons.Default.Repeat to REPEAT_MODE_OFF, Icons.Default.Repeat to REPEAT_MODE_ALL, Icons.Default.RepeatOne to REPEAT_MODE_ONE)
 
@@ -49,13 +50,17 @@ class PlayingSongModel(playerController: PlayerController) : ViewModel() {
         private set
 
     init {
-        refreshMetadata(playerController.mediaMetadata, playerController.currentSong?.albumArtUri?.toUri())
+        refreshMetadata(playerController.mediaMetadata, playerController.currentSong)
 
         playerController.addListener(object : Player.Listener {  // add listeners for UI updates
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) { duration = playerController.duration }
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                duration = playerController.duration
+                if (playerController.mediaMetadata == MediaMetadata.EMPTY)
+                    refreshMetadata(MediaMetadata.EMPTY, playerController.currentSong)
+            }
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                 if (mediaMetadata != MediaMetadata.EMPTY)
-                    refreshMetadata(mediaMetadata, playerController.currentSong?.albumArtUri?.toUri())
+                    refreshMetadata(mediaMetadata, playerController.currentSong)
             }
             override fun onIsPlayingChanged(isPlayin: Boolean) { isPlaying = isPlayin }
             override fun onPlaybackStateChanged(playbackState: Int) { duration = playerController.duration }
@@ -82,11 +87,11 @@ class PlayingSongModel(playerController: PlayerController) : ViewModel() {
         return isShuffled
     }
 
-    fun refreshMetadata(mediaMetadata: MediaMetadata, mediaStoreCover: Uri?) {
-        title = mediaMetadata.title?.toString() ?: mediaMetadata.displayTitle?.toString() ?: "Unknown Title"
-        artist = mediaMetadata.artist?.toString() ?: "Unknown Artist"
-        album = mediaMetadata.albumTitle?.toString() ?: "Unknown Album"
-        cover = mediaMetadata.artworkUri ?: mediaStoreCover
+    fun refreshMetadata(mediaMetadata: MediaMetadata, currentSong: AudioFile?) {
+        title = mediaMetadata.title?.toString() ?: mediaMetadata.displayTitle?.toString() ?: currentSong?.title ?: "Unknown Title"
+        artist = mediaMetadata.artist?.toString() ?: currentSong?.artist ?: "Unknown Artist"
+        album = mediaMetadata.albumTitle?.toString() ?: currentSong?.album ?: "Unknown Album"
+        cover = mediaMetadata.artworkUri ?: currentSong?.albumArtUri?.toUri()
         cover ?: { coverBitmap = mediaMetadata.artworkData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) } }
     }
 }
