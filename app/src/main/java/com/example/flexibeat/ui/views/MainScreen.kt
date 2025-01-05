@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
@@ -54,7 +55,7 @@ fun MusicPlayerMainScreen() {
         onDispose(playerController::destroyPlayer)
     }
 
-    AnimatedContent(isReady) {
+    AnimatedContent(isReady, Modifier.statusBarsPadding()) {
         if (it)
             Scaffold(
                 topBar = {
