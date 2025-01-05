@@ -62,6 +62,7 @@ class PlayerController(context: Context) {
 
     val currentSong get() = queue.getOrNull(songIdx)
     val duration get() = player.duration
+    val isPlaying get() = player.isPlaying
     val songIdx get() = player.currentMediaItemIndex
     val mediaMetadata get() = player.mediaMetadata
     val progress get() = player.currentPosition.toFloat() / player.duration

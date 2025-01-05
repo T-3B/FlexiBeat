@@ -50,8 +50,6 @@ class PlayingSongModel(playerController: PlayerController) : ViewModel() {
         private set
 
     init {
-        refreshMetadata(playerController.mediaMetadata, playerController.currentSong)
-
         playerController.addListener(object : Player.Listener {  // add listeners for UI updates
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 duration = playerController.duration
@@ -68,6 +66,12 @@ class PlayingSongModel(playerController: PlayerController) : ViewModel() {
             override fun onRepeatModeChanged(repeatMode: Int) { loopState = repeatStates.indexOfFirst { it.second == repeatMode } }
             override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) { isShuffled = shuffleModeEnabled }
         })
+
+        refreshMetadata(playerController.mediaMetadata, playerController.currentSong)
+        duration = playerController.duration
+        isPlaying = playerController.isPlaying
+        visualProgress = playerController.progress
+
         val handler = Handler(Looper.getMainLooper())
         lateinit var runnable: Runnable
         runnable = Runnable {
