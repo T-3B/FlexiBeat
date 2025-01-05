@@ -72,6 +72,8 @@ fun SearchTab(playerController: PlayerController, scrollToPage: (Int) -> Unit) {
                 singleLine = true
             )
         }, true, { }, Modifier.fillMaxSize().pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) }, shape = RectangleShape) {
+            if (searchTabModel.errorSearchFilters)
+                Text("Search syntax error !", Modifier.fillMaxWidth().padding(vertical = 8.dp), Color.Red, textAlign = TextAlign.Center)
             LazyRow(contentPadding = PaddingValues(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 itemsIndexed(searchTabModel.chips) { idx, chip ->
                     val iconToColor = if (chip.first) Icons.Default.RemoveCircleOutline to Color.Red else Icons.Default.AddCircleOutline to Color.Green
